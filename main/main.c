@@ -61,7 +61,6 @@
 #define WIFI_CONNECTED_BIT BIT0 
 
 static EventGroupHandle_t s_wifi_event_group;
-static const char *payload = "Message from ESP32 "; //Mensagem temporaria
 static const char *TAG = "Esp_Information";
 static const char stringteste[] = APIP;
 static ip4_addr_t ipteste[4] = {0,};
@@ -72,6 +71,8 @@ static void idf_socket(void *pvParameters){
     int addr_family;
     int ip_protocol;
 
+    wifi_ap_record_t apdata;
+           
     mesh_addr_t testando;
     testando.mip.ip4.addr = ipaddr_addr("192.168.137.1"); //inet_addr(APIP),
     testando.mip.port = 8000;
@@ -84,11 +85,6 @@ static void idf_socket(void *pvParameters){
     int x3 = ((int)ip4_addr3(ipteste));
     int x4 = ((int)ip4_addr4(ipteste));
 
-    char s1[4];
-    char s2[4];
-    char s3[4];
-    char s4[4];
- 
     char ip_final[19];
 
     sprintf(ip_final,"%d.%d.%d.%d",x1,x2,x3,x4);
@@ -107,7 +103,20 @@ static void idf_socket(void *pvParameters){
     
     int err = connect(sock, (struct sockaddr *)&destAddr, sizeof(destAddr));
     ESP_LOGI(TAG,"Conectou %d",err);
+    char payload[sizeof(apdata.rssi)]={0,};
+    uint8_t meshpayload;
+    int socketpayload;
+
     while(1){
+        
+        esp_err_t error = esp_wifi_sta_get_ap_info(&apdata);
+        printf("%d\n",apdata.rssi);
+        meshpayload = (uint8_t)apdata.rssi;
+        printf("%u\n",meshpayload);
+        socketpayload = (int8_t)meshpayload;
+        printf("%d\n",socketpayload);
+        sprintf(payload,"%d",socketpayload); 
+        printf("%s\n\n",payload);
         send(sock,payload,strlen(payload), 0);
         vTaskDelay(2000 / portTICK_PERIOD_MS);
     }
