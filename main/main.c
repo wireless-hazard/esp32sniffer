@@ -55,7 +55,7 @@
 
 #define apssid "apteste"
 #define apsd "magnomaia"
-#define APIP "192.168.137.1"
+#define APIP "192.168.43.1"
 #define PORT 8000
 
 #define WIFI_CONNECTED_BIT BIT0 
@@ -74,7 +74,7 @@ static void idf_socket(void *pvParameters){
     wifi_ap_record_t apdata;
            
     mesh_addr_t testando;
-    testando.mip.ip4.addr = ipaddr_addr("192.168.137.1"); //inet_addr(APIP),
+    testando.mip.ip4.addr = ipaddr_addr("192.168.43.10"); //inet_addr(APIP),
     testando.mip.port = 8000;
     memcpy(ipteste,&testando.mip.ip4.addr,sizeof(testando.mip.ip4.addr));
     ESP_LOGI(TAG,""IPSTR"", IP2STR(ipteste));
